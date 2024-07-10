@@ -1,7 +1,3 @@
-export default function Home() {
-  return (
-    <main>
-      Hello Spotify
-    </main>
-  );
-}
+const Discover = () => <div>Discover</div>;
+
+export default Discover;

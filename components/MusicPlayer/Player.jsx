@@ -1,4 +1,6 @@
 /* eslint-disable jsx-a11y/media-has-caption */
+'use client';
+
 import React, { useRef, useEffect } from 'react';
 
 const Player = ({ activeSong, isPlaying, volume, seekTime, onEnded, onTimeUpdate, onLoadedData, repeat }) => {
