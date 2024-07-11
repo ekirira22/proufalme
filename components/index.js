@@ -10,6 +10,9 @@ import MusicPlayer from './MusicPlayer';
 import Loader from './Loader';
 import Error from './Error';
 import ClientSideWrapper from './ClientSideWrapper';
+import Header from './Header';
+import Button from './Button';
+import ListItem from './ListItem';
 
 export {
   TopPlay,
@@ -24,4 +27,7 @@ export {
   Loader,
   Error,
   ClientSideWrapper,
+  Header,
+  ListItem,
+  Button,
 };

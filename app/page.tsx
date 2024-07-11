@@ -1,11 +1,32 @@
 'use client';
 
-import { Error, Loader, SongCard } from "@/components";
+import { Error, ListItem, Loader, SongCard } from "@/components";
 import { genres } from "@/public/assets/constants";
 
 const Discover = () => {
     const genreTitle = 'Kenyan Worship'
     return(
+        <>
+        <header className="">
+            <div>
+                <h1 className="text-xl font-semibold text-white text-left">Welcome Back</h1>
+            </div>
+            <div className="
+                grid
+                grid-cols-1
+                sm:grid-cols-2 
+                xl:grid-cols-3
+                2xl:grids-cols-4
+                gap-3
+                mt-4  
+            ">
+                <ListItem 
+                    image="/images/liked.png"
+                    name="Liked Songs"
+                    href="LikedSongs"
+                />
+            </div>
+        </header>
         <div className="flex flex-col">
             <div className="w-full flex justify-between items-center sm:flex-row flex-col mt-4 mb-10">
                 <h2 className="font-bold text-3xl text-white text-left">
@@ -38,6 +59,7 @@ const Discover = () => {
                 ))}
             </div>
         </div>
+        </>
     );
 }
 export default Discover;
