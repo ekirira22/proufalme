@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --text-color: #eceff1;
+}
+
+body{
+  color: var(--text-color)
+}
+
 /* Active Navigation Link */
 .active {
   @apply text-cyan-500;
