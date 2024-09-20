@@ -15,7 +15,7 @@ const Header = () => {
   }
 
   return (
-    <div className="h-fit bg-gradient-to-b from-emerald-800 p-6">
+    <div className="h-fit bg-gradient-to-b from-emerald-800 p-6 rounded-lg">
       <div className="w-full mb-4 flex items-center justify-between">
         {/* Large Devices  */}
         <div className="hidden md:flex gap-x-2 items-center">

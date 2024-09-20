@@ -8,7 +8,7 @@ import { Searchbar, Sidebar, MusicPlayer, TopPlay, ClientSideWrapper, Header } f
 const font = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Melos™️ Music",
+  title: "Proufalme™️ Music",
   description: "Music Meets Heaven",
 };
 
@@ -21,9 +21,9 @@ export default function RootLayout({
     <Providers>
       <html lang="en">
         <body className={font.className}>
-          <div className="relative flex">
+          <div className="relative flex bg-[#000000]">
             <Sidebar />
-            <div className="flex-1 flex flex-col bg-gradient-to-br from-black to-[#333333]">
+            <div className="flex-1 flex flex-col bg-gradient-to-br from-black to-[#333333] my-2 rounded-lg">
               <Header />
               <Searchbar />
               <div className="px-6 h-[calc(100vh-72px)] overflow-y-scroll hide-scrollbar flex xl:flex-row flex-col-reverse">
