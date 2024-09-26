@@ -1,12 +1,13 @@
 "use client"
 
 import { useSessionContext, useSupabaseClient } from "@supabase/auth-helpers-react"
+import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Auth } from "@supabase/auth-ui-react"
 import { ThemeSupa } from "@supabase/auth-ui-shared"
+import toast from "react-hot-toast"
 
 import useAuthModal from "@/hooks/useAuthModal"
-
 import Modal from "./Modal"
 
 const AuthModal = () => {
@@ -14,6 +15,15 @@ const AuthModal = () => {
     const router = useRouter();
     const { session } = useSessionContext();
     const { onClose, isOpen } = useAuthModal();
+
+    //To close modal once registred or logged in !!
+    useEffect(() => {
+        if(session){
+            router.refresh();
+            onClose()
+            // toast.success("Logged in!")
+        }
+    }, [session, router, onClose])
 
     const onChange = (open: boolean) => {
         if(!open) {
@@ -30,7 +40,7 @@ const AuthModal = () => {
     >
         <Auth
             theme="dark" 
-            providers={["google", "apple"]}
+            providers={["google"]}
             supabaseClient={supabaseClient}
             appearance={{
                 theme: ThemeSupa,
