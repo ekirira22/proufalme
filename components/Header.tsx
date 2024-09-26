@@ -5,8 +5,18 @@ import { BiSearch } from "react-icons/bi";
 import { HiHome } from "react-icons/hi";
 import { RxCaretLeft, RxCaretRight } from "react-icons/rx";
 import { Button } from "@/components";
+import React from "react";
+import { twMerge } from "tailwind-merge";
 
-const Header = () => {
+interface HeaderProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+const Header:React.FC<HeaderProps> = ({
+  children,
+  className
+}) => {
 
   const router = useRouter()
 
@@ -15,7 +25,7 @@ const Header = () => {
   }
 
   return (
-    <div className="h-fit bg-gradient-to-b from-orange-600 p-6 rounded-lg">
+    <div className={twMerge(`h-fit bg-gradient-to-b from-orange-300 p-6 rounded-lg`)}>
       <div className="w-full mb-4 flex items-center justify-between">
         {/* Large Devices  */}
         <div className="hidden md:flex gap-x-2 items-center">
@@ -52,6 +62,7 @@ const Header = () => {
           </>
         </div>
       </div>
+      { children }
     </div>
   );
 }
