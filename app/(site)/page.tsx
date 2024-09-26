@@ -20,11 +20,12 @@ const Home = () => {
                 gap-3
                 mt-4  
             ">
-                <ListItem 
-                    image="/images/liked.png"
-                    name="Liked Songs"
-                    href="LikedSongs"
-                />
+                
+            <ListItem 
+                image="/images/liked.png"
+                name="Liked Songs"
+                href="LikedSongs"
+            />
             </div>
         </header>
         </>
