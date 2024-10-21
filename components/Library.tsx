@@ -1,10 +1,27 @@
 'use client'
 
+import useAuthModal from "@/hooks/useAuthModal"
+import useUploadModal from "@/hooks/useUploadModal"
+import { useUser } from "@/hooks/useUser"
 import { AiOutlinePlus } from "react-icons/ai"
 import { TbPlaylist } from "react-icons/tb"
 
 const Library = () => {
+    const authModal = useAuthModal();
+    const uploadModal = useUploadModal();
+
+    const { user } = useUser();
+
     const onClick = () => {
+        // Check if a user exists. 
+        if (!user) {
+            return authModal.onOpen();
+        }
+
+        //TODO: Check for subscription
+
+        return uploadModal.onOpen();
+
         // Handle Upload Later
         //It will open an upload modal that will be used to upload songs
     }
