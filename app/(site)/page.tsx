@@ -1,23 +1,11 @@
-'use client';
-
-import { genres } from "@/public/assets/constants";
+import getSongs from "@/actions/getSongs";
 import { Header, ListItem } from "@/components";
+import PageContent from "./components/PageContent";
 
-const Home = () => {
-    // const genreTitle = 'Kenyan Worship'
-    // return(
-    //     <>
-    //     <header className="">
-    //         <div>
-    //             <h1 className="text-xl font-semibold text-white text-left">Welcome Back</h1>
-    //         </div>
+export const revalidate = 0;
 
-                
-
-    //     </header>
-    //     </>
-    // );
-
+export default async function Home() {
+    const songs = await getSongs();
     return (
         <div className="
             bg-neutral-900
@@ -28,29 +16,40 @@ const Home = () => {
             overflow-y-auto
         ">
 
-        <Header>
-            <div className="mb-2">
-                <h1 className="text-white text-3xl font-semibold">
-                    Welcome Back Eric
-                </h1>
-                <div className="
-                    grid
-                    grid-cols-1
-                    sm:grid-cols-2 
-                    xl:grid-cols-3
-                    2xl:grids-cols-4
-                    gap-3
-                    mt-4  
-                ">
-                    <ListItem 
-                        image="/images/liked.png"
-                        name="Liked Songs"
-                        href="LikedSongs"
-                    />
+            <Header>
+                <div className="mb-2">
+                    <h1 className="text-white text-3xl font-semibold">
+                        Welcome back 
+                    </h1>
+                    <div className="
+                        grid
+                        grid-cols-1
+                        sm:grid-cols-2 
+                        xl:grid-cols-3
+                        2xl:grids-cols-4
+                        gap-3
+                        mt-4  
+                    ">
+                        <ListItem 
+                            image="/images/liked.png"
+                            name="Liked Songs"
+                            href="LikedSongs"
+                        />
+                    </div>
                 </div>
+            </Header>
+
+            {/* Body  */}
+            <div className="mt-2 mb-7 px-6">
+                <div className="flex justify-between items-center">
+                    <h1 className="text-white text-2xl font-semibold">
+                        Newest songs
+                    </h1>
+                </div>
+
+                <PageContent songs={songs}/>
+
             </div>
-        </Header>
         </div>
     );
 }
-export default Home;
