@@ -12,6 +12,7 @@ import Modal from "./Modal"
 import Input from "./Input"
 import Button from "./Button"
 import { useSupabaseClient } from "@supabase/auth-helpers-react"
+import SelectCreate from "./SelectCreate"
 
 const UploadModal = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -26,6 +27,7 @@ const UploadModal = () => {
       title: '',
       song: null,
       image: null,
+      album: {},
     }
   })
 
@@ -39,6 +41,7 @@ const UploadModal = () => {
   }
 
   const onSubmit: SubmitHandler<FieldValues> = async (values) => {
+    console.log(values)
     //Upload to supabase buckets
     try {
       setIsLoading(true)
@@ -77,6 +80,20 @@ const UploadModal = () => {
         return toast.error('Failed image upload')
       }
 
+      //Register the album
+      const { error: albumError } = await supabaseClient
+      .from('albums')
+      .insert({
+        id: parseInt(values.album.value),
+        user_id: user.id,
+        title: values.album.label,
+      });
+
+      if (albumError) {
+        setIsLoading(false)
+        return toast.error(albumError.message)
+      }
+
       //Now we have to register this in the sql database
       const { error: supabaseError } = await supabaseClient
         .from('songs')
@@ -85,8 +102,8 @@ const UploadModal = () => {
           title: values.title, 
           author: values.author,
           image_path: imageData.path,
-          song_path: songData.path
-        
+          song_path: songData.path,
+          album_id: values.album.value,
         })
 
       if (supabaseError) {
@@ -117,6 +134,7 @@ const UploadModal = () => {
         onChange={onChange}
     >
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-4">
+          <SelectCreate id="album" disabled={isLoading} {...register('album', { required: true })} />
           <Input id="title" disabled={isLoading} {...register('title', { required: true })} placeholder="Song Title" />
           <Input id="author" disabled={isLoading} {...register('author', { required: true })} placeholder="Song Author" />
           <div>
