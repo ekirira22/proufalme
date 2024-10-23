@@ -7,6 +7,14 @@ export interface Song {
     title: string;
     song_path: string;
     image_path: string;
+    album_id: number;
+}
+
+export interface Album {
+    id: number;
+    user_id: string;
+    title: string;
+    image_path: string;
 }
 
 export interface UserDetails {

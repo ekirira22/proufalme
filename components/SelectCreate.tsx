@@ -1,32 +1,26 @@
-import { forwardRef, SelectHTMLAttributes, useState } from "react"
-import { twMerge } from "tailwind-merge";
+import { forwardRef, Ref, SelectHTMLAttributes, useState } from "react"
+import { SelectInstance, GroupBase } from "react-select";
 import CreatableSelect from "react-select/creatable";
 
-import uniqid from "uniqid"
 
-
-interface SelectCreateProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
-
+interface SelectCreateProps extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'onChange' | 'value'> {
+    onChange?: (newValue: Option | null) => void;
+    value: Option | null;
+    placeholder?: string;
+    listOptions?: {}[];
 }
 
 interface Option {
     readonly label: string;
-    readonly value: string;
+    readonly id: number;
 }
 
-const createOption = (label:string, id:string) => ({
+const createOption = (label:string, id:number) => ({
     label,
-    value: id,
+    id,
 });
 
-const defaultOptions = [
-    createOption('Excuse Me', '456908'),
-    createOption('Undignified', '0648509'),
-    createOption('Heal Me', '598676'),
-    createOption('Wretched Soul', '6589469'),
-]
-
-//Tailwind Styles
+//Custom CSS Styles
 const customSelectStyles = {
     control: (provided: any, state: any) => ({
         ...provided,
@@ -35,7 +29,7 @@ const customSelectStyles = {
         borderRadius: "0.375rem", // corresponds to rounded-md
         backgroundColor: "#3f3f46", // corresponds to bg-neutral-700
         border: "0px solid transparent", // border-transparent
-        padding: "0.5rem", // corresponds to py-3 px-3
+        padding: "0.35rem", // corresponds to py-3 px-3
         fontSize: "0.875rem", // corresponds to text-sm
         color: state.isDisabled ? "#9ca3af" : "#a3a3a3", // corresponds to text-neutral-400, disabled state opacity
         outline: state.isFocused ? "none" : undefined,
@@ -59,7 +53,7 @@ const customSelectStyles = {
     }),
     dropdownIndicator: (provided: any, state: any) => ({
         ...provided,
-        color: state.isFocused ? "#818cf8" : "#a3a3a3", // Customize dropdown arrow color
+        color: state.isFocused ? "#9ca3af" : "#a3a3a3", // Customize dropdown arrow color
     }),
     option: (provided: any, state: any) => ({
         ...provided,
@@ -87,36 +81,45 @@ const customSelectStyles = {
 };
 
 
-const SelectCreate = forwardRef<HTMLSelectElement, SelectCreateProps>(({className, disabled, ...props}, ref ) => {
-    const [isLoading, setIsLoading] = useState(false)
+const SelectCreate = forwardRef<SelectInstance<Option, false, GroupBase<Option>>, SelectCreateProps>(({className, disabled, onChange, value: propValue, placeholder, listOptions, ...props}, ref ) => {
+    
+    const defaultOptions:Option[] = listOptions?.map((option:any) => createOption(option.title, option.id)) || []
+    
+    const [isLoading, setIsLoading] = useState(false);
     const [options, setOptions] = useState(defaultOptions);
-    const [value, setValue] = useState<Option | null>();
-    const albumID = uniqid().replace(/\D/g, '');
+    const [value, setValue] = useState<Option | null>(propValue || null);
 
     const handleCreate = (inputValue:string) => {
         setIsLoading(true);
         setTimeout(() => {
-            const newOption = createOption(inputValue, albumID);
+            const newOption = createOption(inputValue, 0);
             setIsLoading(false);
             setOptions((prev) => [...prev, newOption])
             setValue(newOption);
-        }, 1000)
+            onChange?.(newOption);
+        }, 1000);
     }
     
     return (
         <CreatableSelect
+            ref={ref as Ref<SelectInstance<Option, false, GroupBase<Option>>>}
             isDisabled={disabled}
             isLoading={isLoading}
-            onChange={(newValue) => setValue(newValue)}
+            onChange={(newValue) => 
+                {
+                    setValue(newValue);
+                    onChange?.(newValue);
+                }}
             onCreateOption={handleCreate}
             options={options}
             value={value}
             styles={customSelectStyles}
-            placeholder="Create / Select Album"
+            placeholder={placeholder}
         />
     );
 });
 
 SelectCreate.displayName = "SelectCreate"
 
+export type { Option };
 export default SelectCreate;
