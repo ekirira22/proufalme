@@ -17,6 +17,13 @@ export interface Album {
     image_path: string;
 }
 
+export interface Author {
+    id: number;
+    user_id: string;
+    title: string;
+    image_path: string;
+}
+
 export interface UserDetails {
     id: string;
     first_name: string;
