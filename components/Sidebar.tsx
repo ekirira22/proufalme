@@ -8,16 +8,19 @@ import { BiSolidBinoculars } from "react-icons/bi";
 import { IoLocation } from "react-icons/io5";
 import { MdGroups } from "react-icons/md";
 import { FaHashtag } from "react-icons/fa";
+
+import { Song } from "@/types";
+
 import Box from "./Box";
 import SidebarItem from "./SidebarItem";
 import Library from "./Library";
 
 interface SidebarProps {
   children: React.ReactNode;
+  songs: Song[];
 }
 
-
-const Sidebar: React.FC<SidebarProps> = ( {children} ) => {
+const Sidebar: React.FC<SidebarProps> = ( {children, songs} ) => {
 
   const pathname = usePathname()
   const routes = useMemo(() => [
@@ -89,7 +92,7 @@ const Sidebar: React.FC<SidebarProps> = ( {children} ) => {
             </div>
           </Box>
           <Box className="overflow-y-auto h-full">
-            <Library />
+            <Library songs={songs}/>
           </Box>
         </div>
 
