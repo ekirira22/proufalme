@@ -46,24 +46,24 @@ const Header:React.FC<HeaderProps> = ({
   }
 
   return (
-    <div className={twMerge(`h-fit bg-gradient-to-b from-orange-300 p-6 rounded-lg`)}>
+    <div className={twMerge(`h-fit bg-gradient-to-b from-orange-300 p-6 rounded-lg`, className)}>
       <div className="w-full mb-4 flex items-center justify-between">
         {/* Large Devices  */}
         <div className="hidden md:flex gap-x-2 items-center">
-          <button onClick={() => router.back()} className="rounded-full bg-black flex items-center justify-center hover:opacity-75 transition">
+          <button onClick={() => router.back()} className="rounded-full bg-zinc-950 flex items-center justify-center hover:opacity-75 transition">
             <RxCaretLeft size={35} className="text-white" />
           </button>
-          <button onClick={() => router.forward()} className="rounded-full bg-black flex items-center justify-center hover:opacity-75 transition">
+          <button onClick={() => router.forward()} className="rounded-full bg-zinc-950 flex items-center justify-center hover:opacity-75 transition">
             <RxCaretRight size={35} className="text-white" />
           </button>
         </div>
         {/* Small Devices  */}
         <div className="flex md:hidden gap-x-2 items-center">
           <button className="rounded-full p-2 bg-white flex items-center justify-center hover:opacity-75 transition">
-            <HiHome className="text-black" size={20} />
+            <HiHome className="text-black" size={20} onClick={() => router.push('/')}/>
           </button>
           <button className="rounded-full p-2 bg-white flex items-center justify-center hover:opacity-75 transition">
-            <BiSearch className="text-black" size={20} />
+            <BiSearch className="text-black" size={20} onClick={() => router.push('/search')} />
           </button>
         </div>
         {/* Login Button  */}

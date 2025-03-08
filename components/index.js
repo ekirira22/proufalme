@@ -12,6 +12,9 @@ import Modal from './Modal';
 import UploadModal from './UploadModal';
 import SongItem from './SongItem';
 import PlayButton from './PlayButton';
+import MediaItem from './MediaItem';
+import SearchInput from './SearchInput';
+import LikeButton from './LikeButton';
 
 export {
   Sidebar,
@@ -27,5 +30,8 @@ export {
   Modal,
   UploadModal,
   SongItem,
-  PlayButton
+  PlayButton,
+  MediaItem,
+  SearchInput,
+  LikeButton
 };
