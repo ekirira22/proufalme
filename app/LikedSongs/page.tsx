@@ -7,7 +7,7 @@ export const revalidate = 0;
 
 const LikedSongs = async () => {
   const songs = await getLikedSongs();
-  console.log(songs);
+  
   return (
     <div className="
       bg-neutral-900
