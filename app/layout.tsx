@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
 import "./globals.css";
-import { Sidebar, Header } from '@/components';
+import { Sidebar, Header, Player } from '@/components';
 import SupabaseProvider from "@/providers/SupabaseProvider";
 import UserProvider from "@/providers/UserProvider";
 import ModalProvider from "@/providers/ModalProvider";
@@ -35,6 +35,7 @@ export default async function RootLayout({
                 <Sidebar songs={ userSongs }>
                   { children }
                 </Sidebar>
+                <Player />
             </UserProvider>
           </SupabaseProvider>
         </body>

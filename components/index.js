@@ -15,6 +15,7 @@ import PlayButton from './PlayButton';
 import MediaItem from './MediaItem';
 import SearchInput from './SearchInput';
 import LikeButton from './LikeButton';
+import Player from './Player';
 
 export {
   Sidebar,
@@ -33,5 +34,6 @@ export {
   PlayButton,
   MediaItem,
   SearchInput,
-  LikeButton
+  LikeButton,
+  Player
 };
