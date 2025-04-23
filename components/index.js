@@ -16,6 +16,10 @@ import MediaItem from './MediaItem';
 import SearchInput from './SearchInput';
 import LikeButton from './LikeButton';
 import Player from './Player';
+import PlayerContent from './PlayerContent';
+import Slider from './Slider';
+import AlbumItem from './AlbumItem';
+import AlbumList from './AlbumList';
 
 export {
   Sidebar,
@@ -35,5 +39,9 @@ export {
   MediaItem,
   SearchInput,
   LikeButton,
-  Player
+  Player,
+  PlayerContent,
+  Slider,
+  AlbumItem,
+  AlbumList
 };

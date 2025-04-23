@@ -14,6 +14,8 @@ import { Song } from "@/types";
 import Box from "./Box";
 import SidebarItem from "./SidebarItem";
 import Library from "./Library";
+import usePlayer from "@/hooks/usePlayer";
+import { twMerge } from "tailwind-merge";
 
 interface SidebarProps {
   children: React.ReactNode;
@@ -23,6 +25,7 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ( {children, songs} ) => {
 
   const pathname = usePathname()
+  const player = usePlayer()
   const routes = useMemo(() => [
     [
       {
@@ -38,38 +41,47 @@ const Sidebar: React.FC<SidebarProps> = ( {children, songs} ) => {
         href: '/search'
       }
     ],
-    [
-      {
-        icon: BiSolidBinoculars,
-        label: 'Discover',
-        active: pathname === '/Discover',
-        href: '/Discover'
-      },
-      {
-        icon: IoLocation,
-        label: 'Around You',
-        active: pathname === '/AroundYou',
-        href: '/AroundYou'
-      },
-      {
-        icon: MdGroups,
-        label: 'Top Artists',
-        active: pathname === '/TopArtists',
-        href: '/TopArtists'
-      },
-      {
-        icon: FaHashtag,
-        label: 'Top Charts',
-        active: pathname === '/TopCharts',
-        href: '/TopCharts'
-      }
-    ]
+    // [
+    //   {
+    //     icon: BiSolidBinoculars,
+    //     label: 'Discover',
+    //     active: pathname === '/Discover',
+    //     href: '/Discover'
+    //   },
+    //   {
+    //     icon: IoLocation,
+    //     label: 'Around You',
+    //     active: pathname === '/AroundYou',
+    //     href: '/AroundYou'
+    //   },
+    //   {
+    //     icon: MdGroups,
+    //     label: 'Top Artists',
+    //     active: pathname === '/TopArtists',
+    //     href: '/TopArtists'
+    //   },
+    //   {
+    //     icon: FaHashtag,
+    //     label: 'Top Charts',
+    //     active: pathname === '/TopCharts',
+    //     href: '/TopCharts'
+    //   }
+    // ]
     
   ], [pathname])
 
   // /px-6 h-[calc(100vh-72px)] overflow-y-scroll hide-scrollbar flex xl:flex-row flex-col-reverse
     return (
-      <div className="flex h-[100vh] overflow-y-scroll hide-scrollbar">
+      <div className={twMerge(`
+        flex
+        h-[100vh]
+        overflow-y-scroll
+        hide-scrollbar
+        flex-col
+        xl:flex-row
+        `,
+        player.activeId && 'h-[calc(100vh-80px)]'
+        )}>
         <div className="hidden md:flex flex-col gap-y-2 bg-transparent h-full w-[300px] p-2">
           <Box>
             <div className="flex flex-col gap-y-4 px-5 py-4">
@@ -81,7 +93,7 @@ const Sidebar: React.FC<SidebarProps> = ( {children, songs} ) => {
               ))}
             </div>
           </Box>
-          <Box>
+          {/* <Box>
           <div className="flex flex-col gap-y-4 px-5 py-4">
               {routes[1].map((item) => (
                 <SidebarItem
@@ -90,7 +102,7 @@ const Sidebar: React.FC<SidebarProps> = ( {children, songs} ) => {
                 />
               ))}
             </div>
-          </Box>
+          </Box> */}
           <Box className="overflow-y-auto h-full">
             <Library songs={songs}/>
           </Box>

@@ -15,6 +15,8 @@ export interface Album {
     user_id: string;
     title: string;
     image_path: string;
+    created_at: string;
+    songs?: Song[];  // Optional array of songs in the album
 }
 
 export interface Author {
