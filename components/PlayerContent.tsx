@@ -32,6 +32,10 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
         if (player.ids.length === 0) {
             return;
         }
+        if (player.repeatMode === RepeatMode.ONE) {
+            play();
+            return;
+        }
         const currentIndex = player.ids.findIndex((id) => id === player.activeId);
         const nextSong = player.ids[currentIndex + 1];
 
@@ -77,6 +81,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
             setIsPlaying(false);
             onPlayNext();
         },
+        onpause: () => setIsPlaying(false),
         format: ['mp3'],
         preload: true,
         interrupt: true,
