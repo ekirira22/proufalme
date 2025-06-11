@@ -80,8 +80,8 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
             setIsPlaying(false);
             onPlayNext();
         },
-        onpause: () => setIsPlaying(false),
-        format: ['mp3']
+        format: ['mp3'],
+        interrupt: true,
     })
 
     useEffect(() => {
@@ -101,12 +101,8 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
     }
 
     const toggleMute = () => {
-        if (player.volume === 0) {
-            player.setVolume(1);
-        } else {
-            player.setVolume(0);
-        }
-    }
+        player.setVolume(player.volume === 0 ? 1 : 0);
+    };
 
     const handleVolumeChange = (value: number) => {
         player.setVolume(value);

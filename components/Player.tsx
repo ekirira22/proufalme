@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect } from "react";
 import usePlayer from "@/hooks/usePlayer"
 import useGetSongById from "@/hooks/useGetSongById";
 import useLoadSongUrl from "@/hooks/useLoadSongUrl";
@@ -12,9 +13,21 @@ const Player = () => {
   
   const songUrl = useLoadSongUrl(song!);
 
-  // if(!song || !songUrl || !player.activeId) {
-  //   return null
-  // }
+  useEffect(() => {
+    if (player.activeId) {
+      player.preloadAudio(player.activeId);
+    }
+  }, [player.activeId]);
+
+  // Optionally, only play after preload to minimize delay
+  // useEffect(() => {
+  //   if (player.activeId) {
+  //     player.play();
+  //   }
+  // }, [player.activeId]);
+
+  if (!song || !songUrl) return null;
+
 
   return (
     <div className="

@@ -7,19 +7,26 @@ export enum RepeatMode {
 }
 
 interface PlayerStore {
-    ids: string[];
-    activeId?: string;
-    volume: number;
-    isShuffled: boolean;
-    repeatMode: RepeatMode;
-    originalIds: string[]; // Store original order for shuffle
-    setId: (id: string) => void;
-    setIds: (ids: string[]) => void;
-    setVolume: (volume: number) => void;
-    toggleShuffle: () => void;
-    setRepeatMode: (mode: RepeatMode) => void;
-    reset: () => void;
-};
+  ids: string[];
+  originalIds: string[];
+  activeId?: string;
+  volume: number;
+  isShuffled: boolean;
+  repeatMode: RepeatMode;
+  setId: (id: string) => void;
+  setIds: (ids: string[]) => void;
+  setVolume: (volume: number) => void;
+  toggleShuffle: () => void;
+  setRepeatMode: (mode: RepeatMode) => void;
+  play: () => void;
+  pause: () => void;
+  next: () => void;
+  previous: () => void;
+  preloadAudio: (id: string) => void;
+  reset: () => void;
+}
+
+const audio = typeof window !== "undefined" ? new Audio() : null;
 
 const usePlayer = create<PlayerStore>((set, get) => ({
     ids: [],
