@@ -33,6 +33,8 @@ const UploadModal = () => {
 
   const album = watch('album');
   const author = watch('author');
+  const albums  = useFetchAlbums();
+  const authors = useFetchAuthors();
 
   //import upload Modal hook
   const onChange = (open: boolean) => { 
@@ -41,136 +43,116 @@ const UploadModal = () => {
       reset();
       uploadModal.onClose();
     }
-  }
+  }  
 
-  //import fetchAlbums and fetchAuthors hooks
-  const albums  = useFetchAlbums();
-  const authors = useFetchAuthors();
+  
+  const findOrCreate = async (table: 'albums' | 'authors', label: string) => {
+    const { data: existing } = await supabaseClient
+      .from(table)
+      .select('*')
+      .ilike('title', label)
+      .maybeSingle();
+
+    if (existing) return existing.id;
+
+    const { data, error } = await supabaseClient
+      .from(table)
+      .insert({ user_id: user?.id, title: label })
+      .select()
+      .single();
+
+    if (error) throw new Error(error.message);
+    return data.id;
+  };
 
   const onSubmit: SubmitHandler<FieldValues> = async (values) => {
-    //Upload to supabase buckets
     try {
-      setIsLoading(true)
-      //Extract image and song file
-      const imageFile = values.image?.[0]
-      const songFile = values.song?.[0]
+      setIsLoading(true);
+  
+      const songFiles: File[] = Array.from(values.song);
+      const imageFiles: File[] = Array.from(values.image);
 
-      // Check if anything is missing
-      // console.log(imageFile, songFile, user, values.album, albums, authors)
-
-      if (!imageFile || !songFile || !user || !values.album) {
-        setIsLoading(false)
-        toast.error("Missing fields")
-        return
+      if (!songFiles?.length || !imageFiles?.length || !user || !values.album || !values.author) {
+        toast.error("All fields are required.");
+        return;
+      }
+  
+      if (songFiles.length !== imageFiles.length) {
+        toast.error("Each song must have a corresponding image.");
+        return;
       }
 
-      const uniqueID = uniqid();
+      const albumId = await findOrCreate('albums', values.album.label);
+      const authorId = await findOrCreate('authors', values.author.label);
+  
+      // Loop through files and upload
+      for (let i = 0; i < songFiles.length; i++) {
+        const songFile = songFiles[i];
+        const imageFile = imageFiles[i];  
+        const uniqueID = uniqid();
 
-      //Upload Song to storage
-      const { data:songData, error:songError } = await supabaseClient
-        .storage
-        .from('songs')
-        .upload(`song-${values.title}-${uniqueID}`, songFile, { cacheControl: '3600', upsert: false })
+        const title = values.title
+          ? `${values.title} ${i + 1}`
+          : songFile.name.replace(/\.[^/.]+$/, "");
 
-      if (songError) {
-        setIsLoading(false)
-        return toast.error('Failed song upload')
-      }
-
-      //Upload Image to storage
-      const { data:imageData, error:imageError } = await supabaseClient
-        .storage
-        .from('images')
-        .upload(`image-${values.title}-${uniqueID}`, imageFile, { cacheControl: '3600', upsert: false })
-
-      if (imageError) {
-        setIsLoading(false)
-        return toast.error('Failed image upload')
-      }
-
-      //Check if album exists in supabase, if not, create it with values.album.value as the album.id in supabase
-      const { data:albumData, error:albumError } = await supabaseClient
-        .from('albums')
-        .select('id')
-        .eq('id', values.album.id)
-        .single();
-
-      let newAlbum;
-
-      if (!albumData) {
-        const { data:newAlbumData, error:newAlbumError } = await supabaseClient
-          .from('albums')
-          .insert({ user_id: user.id, title: values.album.label })
-          .select()
-          .single();
-
-        if (newAlbumError) {
-          setIsLoading(false)
-          return toast.error(newAlbumError.message)
+        const { data: songData, error: songError } = await supabaseClient.storage
+          .from('songs')
+          .upload(`song-${title}-${uniqueID}`, songFile, {
+            cacheControl: '3600',
+            upsert: false,
+          });
+  
+        if (songError) {
+          toast.error(`Song ${i + 1} failed`);
+          continue;
         }
-        newAlbum = newAlbumData;
-      }
+  
+        const { data: imageData, error: imageError } = await supabaseClient.storage
+          .from('images')
+          .upload(`image-${title}-${uniqueID}`, imageFile, {
+            cacheControl: '3600',
+            upsert: false,
+          });
+  
 
-      //Check if author exists in supabase, if not, create it with values.author.value as the author.id in supabase
-      const { data:authorData, error:authorError } = await supabaseClient
-        .from('authors')
-        .select('id')
-        .eq('id', values.author.id)
-        .single();
-
-      let newAuthor;
-
-      if (!authorData) {
-        const { data:newAuthorData, error:newAuthorError } = await supabaseClient
-          .from('authors')
-          .insert({ user_id: user.id, title: values.author.label })
-          .select()
-          .single();
-
-        if (newAuthorError) {
-          setIsLoading(false)
-          return toast.error(newAuthorError.message)
+        if (imageError) {
+          toast.error(`Image ${i + 1} failed`);
+          continue;
         }
-        newAuthor = newAuthorData;
-      }
-
-      //Now we have to register this in the sql database
-      const { error: supabaseError } = await supabaseClient
-        .from('songs')
-        .insert({ 
-          user_id: user.id, 
-          title: values.title, 
+  
+        const { error: insertError } = await supabaseClient.from('songs').insert({
+          user_id: user.id,
+          title,
           author: values.author.label,
           image_path: imageData.path,
           song_path: songData.path,
-          album_id: albumData?.id || newAlbum?.id,
-          author_id: authorData?.id || newAuthor?.id,
-        })
-
-      if (supabaseError) {
-        setIsLoading(false)
-        return toast.error(supabaseError.message)
+          album_id: albumId,
+          author_id: authorId,
+        });
+  
+        if (insertError) {
+          toast.error(`Failed to save song ${title}`);
+          continue;
+        }
+  
+        toast.success(`Uploaded: ${title}`);
       }
-
-      //If everything went correctly
-      router.refresh();
-      setIsLoading(false);
-      toast.success('Song added!');
+  
       reset();
       uploadModal.onClose();
-
-    } catch (error) {
-      toast.error("Something went wrong");
+      router.refresh();
+  
+    } catch (err: any) {
+      toast.error(err.message || "Upload failed.");
     } finally {
-      window.location.reload();
       setIsLoading(false);
     }
-  }
-
+  };
+  
   return (
     <Modal
-        title="Add a Song"
-        description="Upload an MP3 file"
+        title="Add Songs"
+        description="Upload MP3 file"
         isOpen={uploadModal.isOpen}
         onChange={onChange}
     >
@@ -203,19 +185,19 @@ const UploadModal = () => {
                     
           <div>
             <div className="pb-1">
-              Select a song file
+              Select songs
             </div>
-            <Input id="song" disabled={isLoading} accept=".mp3" {...register('song', { required: true })} type="file" />
+            <Input id="song" disabled={isLoading} accept=".mp3" {...register('song', { required: true })} type="file" multiple />
           </div>
 
           <div>
             <div className="pb-1">
-              Select an image
+              Select images
             </div>
-            <Input id="image" disabled={isLoading} accept="image/*" {...register('image', { required: true })} type="file" />
+            <Input id="image" disabled={isLoading} accept="image/*" {...register('image', { required: true })} type="file" multiple />
           </div>
 
-          <Button disabled={isLoading} type="submit"> Add Song </Button>
+          <Button disabled={isLoading} type="submit"> Add Songs </Button>
 
         </form>
     </Modal>
