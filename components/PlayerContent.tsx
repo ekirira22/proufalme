@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { AiFillStepBackward, AiFillStepForward } from "react-icons/ai";
 import { BsPauseFill, BsPlayFill, BsShuffle, BsRepeat, BsRepeat1 } from "react-icons/bs";
 import { HiSpeakerWave, HiSpeakerXMark } from "react-icons/hi2";
@@ -25,16 +25,13 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
     const Icon = isPlaying ? BsPauseFill : BsPlayFill;
     const VolumeIcon = player.volume === 0 ? HiSpeakerXMark : HiSpeakerWave;
 
+    const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+
     const onPlayNext = () => {
         if (player.ids.length === 0) {
             return;
         }
-
-        if (player.repeatMode === RepeatMode.ONE) {
-            play();
-            return;
-        }
-
         const currentIndex = player.ids.findIndex((id) => id === player.activeId);
         const nextSong = player.ids[currentIndex + 1];
 
@@ -81,6 +78,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
             onPlayNext();
         },
         format: ['mp3'],
+        preload: true,
         interrupt: true,
     })
 
