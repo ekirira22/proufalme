@@ -13,12 +13,18 @@ const useOnPlay = (songs: Song[]) => {
         if (!user) {                    
             return authModal.onOpen();      
         }
-
-        // TODO: Check for subscription
-
+    
+        const ids = songs.map((song) => song.id);
+        player.setIds(ids);
         player.setId(id);
-        player.setIds(songs.map((song) => song.id));
-    };
+    
+        // Preload next few songs (optional)
+        const currentIndex = ids.indexOf(id);
+        const nextSongs = ids.slice(currentIndex + 1, currentIndex + 4);
+        nextSongs.forEach((songId) => player.preloadAudio(songId));
+    
+        player.play();
+      };
 
     return onPlay;
 }
