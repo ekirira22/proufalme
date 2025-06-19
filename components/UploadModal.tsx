@@ -16,6 +16,7 @@ import Button from "./Button"
 import { useSupabaseClient } from "@supabase/auth-helpers-react"
 import SelectCreate, { Option } from "./SelectCreate"
 
+
 const UploadModal = () => {
   const [isLoading, setIsLoading] = useState(false);
   const uploadModal = useUploadModal();
@@ -29,23 +30,20 @@ const UploadModal = () => {
       song: null,
       image: null,
     }
-  })
+  });
 
   const album = watch('album');
   const author = watch('author');
-  const albums  = useFetchAlbums();
+  const albums = useFetchAlbums();
   const authors = useFetchAuthors();
 
-  //import upload Modal hook
-  const onChange = (open: boolean) => { 
+  const onChange = (open: boolean) => {
     if (!open) {
-      //Reset the form
       reset();
       uploadModal.onClose();
     }
-  }  
+  };
 
-  
   const findOrCreate = async (table: 'albums' | 'authors', label: string) => {
     const { data: existing } = await supabaseClient
       .from(table)
@@ -68,32 +66,45 @@ const UploadModal = () => {
   const onSubmit: SubmitHandler<FieldValues> = async (values) => {
     try {
       setIsLoading(true);
-  
-      const songFiles: File[] = Array.from(values.song);
-      const imageFiles: File[] = Array.from(values.image);
 
-      if (!songFiles?.length || !imageFiles?.length || !user || !values.album || !values.author) {
-        toast.error("All fields are required.");
+      const songFiles: File[] = values.song ? Array.from(values.song) : [];
+      const imageFile: File | null = values.image?.[0] || null;
+
+      if (!songFiles.length || !user || !values.album || !values.author) {
+        toast.error("Please select songs, an album, and an author.");
         return;
       }
-  
-      if (songFiles.length !== imageFiles.length) {
-        toast.error("Each song must have a corresponding image.");
+
+      if (songFiles.length > 300) {
+        toast.error("You can only upload up to 300 songs at once.");
         return;
       }
 
       const albumId = await findOrCreate('albums', values.album.label);
       const authorId = await findOrCreate('authors', values.author.label);
-  
-      // Loop through files and upload
+
+      let defaultImagePath = "default-cover.png";
+
+      if (imageFile) {
+        const uniqueID = uniqid();
+        const { data: imageData, error: imageError } = await supabaseClient.storage
+          .from('images')
+          .upload(`image-default-${uniqueID}`, imageFile, {
+            cacheControl: '3600',
+            upsert: false,
+          });
+
+        if (imageError) {
+          toast.error("Failed to upload image, using default.");
+        } else {
+          defaultImagePath = imageData.path; 
+        }
+      }
+
       for (let i = 0; i < songFiles.length; i++) {
         const songFile = songFiles[i];
-        const imageFile = imageFiles[i];  
+        const title = songFile.name.replace(/\.[^/.]+$/, ""); // Strip extension
         const uniqueID = uniqid();
-
-        const title = values.title
-          ? `${values.title} ${i + 1}`
-          : songFile.name.replace(/\.[^/.]+$/, "");
 
         const { data: songData, error: songError } = await supabaseClient.storage
           .from('songs')
@@ -101,107 +112,85 @@ const UploadModal = () => {
             cacheControl: '3600',
             upsert: false,
           });
-  
-        if (songError) {
-          toast.error(`Song ${i + 1} failed`);
-          continue;
-        }
-  
-        const { data: imageData, error: imageError } = await supabaseClient.storage
-          .from('images')
-          .upload(`image-${title}-${uniqueID}`, imageFile, {
-            cacheControl: '3600',
-            upsert: false,
-          });
-  
 
-        if (imageError) {
-          toast.error(`Image ${i + 1} failed`);
+        if (songError) {
+          toast.error(`Failed to upload song: ${title}`);
           continue;
         }
-  
+
         const { error: insertError } = await supabaseClient.from('songs').insert({
           user_id: user.id,
           title,
           author: values.author.label,
-          image_path: imageData.path,
+          image_path: defaultImagePath,
           song_path: songData.path,
           album_id: albumId,
           author_id: authorId,
         });
-  
+
         if (insertError) {
-          toast.error(`Failed to save song ${title}`);
+          toast.error(`Failed to save song: ${title}`);
           continue;
         }
-  
+
         toast.success(`Uploaded: ${title}`);
       }
-  
+
       reset();
       uploadModal.onClose();
       router.refresh();
-  
+
     } catch (err: any) {
       toast.error(err.message || "Upload failed.");
     } finally {
       setIsLoading(false);
     }
   };
-  
+
   return (
     <Modal
-        title="Add Songs"
-        description="Upload MP3 file"
-        isOpen={uploadModal.isOpen}
-        onChange={onChange}
+      title="Add Songs"
+      description="Upload MP3 files"
+      isOpen={uploadModal.isOpen}
+      onChange={onChange}
     >
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-4">
-        <Input id="title" disabled={isLoading} {...register('title', { required: true })} placeholder="Song Title" />
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-4">
+        <Input id="title" disabled={isLoading} {...register('title')} placeholder="Optional title prefix" />
 
-        <SelectCreate 
-            id="author" 
-            disabled={isLoading} 
-            {...register('author', { required: true })}
-            value={author}
-            onChange={(newValue:Option | null) => {
-              setValue('author', newValue);
-            }}
-            placeholder="Create / Select Author"
-            listOptions={authors.authors as []}
-          />
+        <SelectCreate
+          id="author"
+          disabled={isLoading}
+          {...register('author', { required: true })}
+          value={author}
+          onChange={(newValue: Option | null) => setValue('author', newValue)}
+          placeholder="Create / Select Author"
+          listOptions={authors.authors as []}
+        />
 
-          <SelectCreate 
-            id="album" 
-            disabled={isLoading} 
-            {...register('album', { required: true })}
-            value={album}
-            onChange={(newValue:Option | null) => {
-              setValue('album', newValue);
-            }}
-            placeholder="Create / Select Album"
-            listOptions={albums.albums as []}
-          />
-                    
-          <div>
-            <div className="pb-1">
-              Select songs
-            </div>
-            <Input id="song" disabled={isLoading} accept=".mp3" {...register('song', { required: true })} type="file" multiple />
-          </div>
+        <SelectCreate
+          id="album"
+          disabled={isLoading}
+          {...register('album', { required: true })}
+          value={album}
+          onChange={(newValue: Option | null) => setValue('album', newValue)}
+          placeholder="Create / Select Album"
+          listOptions={albums.albums as []}
+        />
 
-          <div>
-            <div className="pb-1">
-              Select images
-            </div>
-            <Input id="image" disabled={isLoading} accept="image/*" {...register('image', { required: true })} type="file" multiple />
-          </div>
+        <div>
+          <div className="pb-1">Select songs</div>
+          <Input id="song" disabled={isLoading} accept=".mp3" {...register('song', { required: true })} type="file" multiple />
+        </div>
 
-          <Button disabled={isLoading} type="submit"> Add Songs </Button>
+        <div>
+          <div className="pb-1">ASelect image (Optional)</div>
+          <Input id="image" disabled={isLoading} accept="image/*" {...register('image')} type="file" />
+        </div>
 
-        </form>
+        <Button disabled={isLoading} type="submit">Add Songs</Button>
+      </form>
     </Modal>
-  )
-}
+  );
+};
 
-export default UploadModal  
+export default UploadModal;
