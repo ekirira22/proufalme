@@ -1,6 +1,6 @@
 "use client"
 import { usePathname } from "next/navigation";
-import { useMemo } from "react";
+import { useMemo, useEffect, useState } from "react";
 import { BiSearch } from "react-icons/bi";
 import { HiHome } from "react-icons/hi";
 import { LuListMusic } from "react-icons/lu";
@@ -19,13 +19,30 @@ import { twMerge } from "tailwind-merge";
 
 interface SidebarProps {
   children: React.ReactNode;
-  songs: Song[];
+  songs?: Song[];
 }
 
-const Sidebar: React.FC<SidebarProps> = ( {children, songs} ) => {
+
+const Sidebar: React.FC<SidebarProps> = ( {children} ) => {
 
   const pathname = usePathname()
   const player = usePlayer()
+  const [songs, setSongs] = useState<Song[]>([]);
+
+  useEffect(() => {
+    const fetchSongs = async () => {
+      try {
+        const res = await fetch("/api/user-songs");
+        const data = await res.json();
+        setSongs(data);
+      } catch (error) {
+        console.error("Failed to fetch user songs:", error);
+      }
+    };
+
+    fetchSongs();
+  }, []);
+  
   const routes = useMemo(() => [
     [
       {
@@ -104,7 +121,7 @@ const Sidebar: React.FC<SidebarProps> = ( {children, songs} ) => {
             </div>
           </Box> */}
           <Box className="overflow-y-auto h-full">
-            <Library songs={songs}/>
+          <Library songs={songs || []} />
           </Box>
         </div>
 
