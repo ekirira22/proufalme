@@ -8,6 +8,8 @@ export interface Song {
     song_path: string;
     image_path: string;
     album_id: number;
+    author_id: number;
+    created_at: string;
 }
 
 export interface Album {

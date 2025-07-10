@@ -1,111 +1,117 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { BiSearch } from "react-icons/bi";
-import { HiHome } from "react-icons/hi";
-import { RxCaretLeft, RxCaretRight } from "react-icons/rx";
-import { twMerge } from "tailwind-merge";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { FaUserAlt } from "react-icons/fa";
+import { HiMenuAlt3 } from "react-icons/hi";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { twMerge } from "tailwind-merge";
 import toast from "react-hot-toast";
 
 import { Button } from "@/components";
 import useAuthModal from "@/hooks/useAuthModal";
 import { useUser } from "@/hooks/useUser";
+import { useSidebarToggle } from "@/hooks/useSidebarToggle";
 
 interface HeaderProps {
   children: React.ReactNode;
   className?: string;
 }
 
-const Header:React.FC<HeaderProps> = ({
-  children,
-  className
-}) => {
-
+const Header: React.FC<HeaderProps> = ({ children, className }) => {
   const authModal = useAuthModal();
-  const router = useRouter()
-
-  //Add supabase client
+  const router = useRouter();
   const supabaseClient = useSupabaseClient();
   const { user } = useUser();
+  const { toggle } = useSidebarToggle();
 
-
-  const handleLogout = async() => {
-    // Handle logout
+  const handleLogout = async () => {
     const { error } = await supabaseClient.auth.signOut();
-    //TODO: Reset any playing songs
-    router.refresh()
-
-    if(error){
-      toast.error(error.message)
-    }else{
-      toast.success('Logged out!')
-    }
-
-  }
+    router.refresh();
+    if (error) toast.error(error.message);
+    else toast.success("Logged out!");
+  };
 
   return (
-    <div className={twMerge(`h-fit bg-gradient-to-b from-orange-300 p-6 rounded-lg`, className)}>
-      <div className="w-full mb-4 flex items-center justify-between">
-        {/* Large Devices  */}
-        <div className="hidden md:flex gap-x-2 items-center">
-          <button onClick={() => router.back()} className="rounded-full bg-zinc-950 flex items-center justify-center hover:opacity-75 transition">
-            <RxCaretLeft size={35} className="text-white" />
-          </button>
-          <button onClick={() => router.forward()} className="rounded-full bg-zinc-950 flex items-center justify-center hover:opacity-75 transition">
-            <RxCaretRight size={35} className="text-white" />
-          </button>
-        </div>
-        {/* Small Devices  */}
-        <div className="flex md:hidden gap-x-2 items-center">
-          <button className="rounded-full p-2 bg-white flex items-center justify-center hover:opacity-75 transition">
-            <HiHome className="text-black" size={20} onClick={() => router.push('/')}/>
-          </button>
-          <button className="rounded-full p-2 bg-white flex items-center justify-center hover:opacity-75 transition">
-            <BiSearch className="text-black" size={20} onClick={() => router.push('/search')} />
+    <div
+      className={twMerge(
+        `mt-2 bg-gradient-to-b from-orange-300 to-orange-700 p-4 md:p-6 rounded-b-2xl shadow-lg`,
+        className
+      )}
+    >
+      <div className="relative flex items-center justify-between w-full md:pt-8">
+        {/* Left: Hamburger (mobile only) */}
+        <div className="w-1/3 flex md:hidden">
+          <button
+            onClick={toggle}
+            className="p-2 bg-white rounded-full hover:opacity-80 transition"
+          >
+            <HiMenuAlt3 size={20} className="text-black" />
           </button>
         </div>
-        {/* Login Button  */}
-        <div className="flex justify-between items-center gap-x-4">
-          {/* Empty fragment to make content dynamic depending on whether user is logged in or not  */}
 
-          {user ? (
-            <div className="flex gap-x-4 items-center">
+        {/* Center: Branding */}
+        <div
+          className="
+            flex justify-center
+            md:absolute md:left-1/2 md:transform md:-translate-x-1/2
+            z-10
+          "
+        >
+          <Link
+            href="/"
+            className="text-lg md:text-2xl font-bold text-black tracking-wide hover:opacity-80 transition text-center"
+          >
+            Proufalme
+            <span className="text-sm md:text-lg text-blue-700">™</span> Music
+          </Link>
+        </div>
+
+        {/* Right: Auth Buttons */}
+        <div
+          className="
+            w-1/3 flex justify-end items-center gap-3
+            md:absolute md:right-6 md:top-4 md:w-auto z-10
+          "
+        >
+          {!user ? (
+            <>
+              <button
+                onClick={authModal.onOpen}
+                className="text-sm md:text-base font-medium text-black hover:underline whitespace-nowrap"
+              >
+                Sign up
+              </button>
+              <Button
+                onClick={authModal.onOpen}
+                className="bg-white text-black px-3 py-1 text-sm md:text-base rounded-full font-semibold"
+              >
+                Log in
+              </Button>
+            </>
+          ) : (
+            <>
               <Button
                 onClick={handleLogout}
-                className="bg-white px-6 py-2"
+                className="bg-white text-black px-3 py-1 text-sm md:text-base rounded-full font-semibold"
               >
                 Logout
               </Button>
-
-              <Button
-                onClick={() => router.push('/account')}
-                className="bg-white py-3"
+              <button
+                onClick={() => router.push("/account")}
+                className="p-2 bg-white rounded-full hover:opacity-80 transition"
               >
-                <FaUserAlt />
-              </Button>
-            </div>
-          ) : (
-            <>
-              <div>
-                <Button onClick={authModal.onOpen} className="bg-transparent text-neutral-300 font-medium">
-                  Sign up
-                </Button>
-              </div>
-              <div>
-                <Button onClick={authModal.onOpen} className="bg-white px-6 py-2 font-medium">
-                  Log in
-                </Button>
-              </div>
+                <FaUserAlt size={18} className="text-black" />
+              </button>
             </>
           )}
 
         </div>
       </div>
-      { children }
+      {/* Page content slot */}
+      <div className="mt-6">{children}</div>
     </div>
   );
-}
+};
 
-export default Header
+export default Header;
