@@ -1,11 +1,15 @@
 import { Album } from "@/types";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 const getAlbums = async (): Promise<Album[]> => {
-    const supabase = createServerComponentClient({
-        cookies: cookies
-    });
+    const supabase = createClientComponentClient();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+  
+    const user = session?.user;
+  
+    if (!user) return [];
     
     const { data, error } = await supabase
         .from('albums')

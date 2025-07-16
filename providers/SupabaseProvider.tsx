@@ -15,27 +15,35 @@ const SupabaseProvider: React.FC<SupabaseProviderProps> = ({ children }) => {
 
   useEffect(() => {
     if (!isNativeApp()) return
-
+  
+    let removeListener: any
+  
     const setupDeepLinking = async () => {
-      try {
-        const { App } = await import("@capacitor/app")
-        App.addListener("appUrlOpen", async ({ url }) => {
-          if (url?.startsWith("myapp://login-callback")) {
-            try {
-              await supabaseClient.auth.exchangeCodeForSession(url)
-              console.log("Deep link session exchanged")
-            } catch (err) {
-              console.error("Exchange failed", err)
-            }
+      const { App } = await import("@capacitor/app")
+  
+      removeListener = App.addListener("appUrlOpen", async ({ url }) => {
+        if (url?.startsWith("proufalme://login-callback")) {
+          const { data, error } = await supabaseClient.auth.exchangeCodeForSession(url)
+  
+          if (error) {
+            console.error("Session exchange error:", error.message)
+          } else {
+            console.log("Deep link session exchanged:", data)
           }
-        })
-      } catch (err) {
-        console.warn("Capacitor App plugin not loaded", err)
+        }
+      })
+    }
+  
+    setupDeepLinking()
+  
+    return () => {
+      // clean up on unmount
+      if (removeListener && typeof removeListener.remove === "function") {
+        removeListener.remove()
       }
     }
-
-    setupDeepLinking()
   }, [supabaseClient])
+  
 
   return (
     <SessionContextProvider supabaseClient={supabaseClient}>

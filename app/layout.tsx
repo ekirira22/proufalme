@@ -14,6 +14,7 @@ const font = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Proufalme™️ Music",
   description: "Music Meets Heaven",
+  viewport: "width=device-width, initial-scale=1", 
 };
 
 export const revalidate = 0; // For making this layout non-cacheable

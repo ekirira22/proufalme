@@ -1,3 +1,5 @@
+// app/auth/callback/page.tsx
+
 "use client"
 
 import { useEffect } from "react"
@@ -12,9 +14,10 @@ export default function AuthCallbackPage() {
     const completeSignIn = async () => {
       const { error } = await supabase.auth.getSession()
       if (error) {
-        console.error("Error getting session", error)
+        console.error("Error exchanging code for session:", error.message)
+      } else {
+        router.replace("/") // or wherever you want to redirect
       }
-      router.push("/") 
     }
 
     completeSignIn()

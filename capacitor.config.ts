@@ -9,11 +9,11 @@ try {
   config = {
     appId: "com.proufalme.musicapp",
     appName: "proufalme",
-    webDir: "public",
-    server: {
-      url: "https://proufalme.vercel.app",
-      cleartext: true,
-    },
+    webDir: "out",
+    // server: {
+    //   url: "https://proufalme.vercel.app",
+    //   cleartext: true,
+    // },
     plugins: {
       GoogleAuth: {
         scopes: ["profile", "email"],

@@ -1,5 +1,6 @@
 "use client";
 
+import Head from "next/head"; 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FaUserAlt } from "react-icons/fa";
@@ -33,6 +34,10 @@ const Header: React.FC<HeaderProps> = ({ children, className }) => {
   };
 
   return (
+    <>
+    <Head>
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+    </Head>
     <div
       className={twMerge(
         `mt-2 bg-gradient-to-b from-orange-300 to-orange-700 p-4 md:p-6 rounded-b-2xl shadow-lg`,
@@ -111,6 +116,8 @@ const Header: React.FC<HeaderProps> = ({ children, className }) => {
       {/* Page content slot */}
       <div className="mt-6">{children}</div>
     </div>
+    </>
+
   );
 };
 
