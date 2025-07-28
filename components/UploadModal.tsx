@@ -148,56 +148,48 @@ const UploadModal = () => {
   };
 
   return (
-    // <div
-    //   className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50"
-    // >
-      <Modal
-        title="Add Songs"
-        description="Upload MP3 files"
-        isOpen={uploadModal.isOpen}
-        onChange={onChange}
-      >
-        <div
-          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50"
-        >
-          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-4">
-            <Input id="title" disabled={isLoading} {...register('title')} placeholder="Optional title prefix" />
+    <Modal
+      title="Add Songs"
+      description="Upload MP3 files"
+      isOpen={uploadModal.isOpen}
+      onChange={onChange}
+    >
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-4">
+        <Input id="title" disabled={isLoading} {...register('title')} placeholder="Optional title prefix" />
 
-            <SelectCreate
-              id="author"
-              disabled={isLoading}
-              {...register('author', { required: true })}
-              value={author}
-              onChange={(newValue: Option | null) => setValue('author', newValue)}
-              placeholder="Create / Select Author"
-              listOptions={authors.authors as []}
-            />
+        <SelectCreate
+          id="author"
+          disabled={isLoading}
+          {...register('author', { required: true })}
+          value={author}
+          onChange={(newValue: Option | null) => setValue('author', newValue)}
+          placeholder="Create / Select Author"
+          listOptions={authors.authors as []}
+        />
 
-            <SelectCreate
-              id="album"
-              disabled={isLoading}
-              {...register('album', { required: true })}
-              value={album}
-              onChange={(newValue: Option | null) => setValue('album', newValue)}
-              placeholder="Create / Select Album"
-              listOptions={albums.albums as []}
-            />
+        <SelectCreate
+          id="album"
+          disabled={isLoading}
+          {...register('album', { required: true })}
+          value={album}
+          onChange={(newValue: Option | null) => setValue('album', newValue)}
+          placeholder="Create / Select Album"
+          listOptions={albums.albums as []}
+        />
 
-            <div>
-              <div className="pb-1">Select songs</div>
-              <Input id="song" disabled={isLoading} accept=".mp3" {...register('song', { required: true })} type="file" multiple />
-            </div>
-
-            <div>
-              <div className="pb-1">ASelect image (Optional)</div>
-              <Input id="image" disabled={isLoading} accept="image/*" {...register('image')} type="file" />
-            </div>
-
-            <Button disabled={isLoading} type="submit">Add Songs</Button>
-          </form>
+        <div>
+          <div className="pb-1">Select songs</div>
+          <Input id="song" disabled={isLoading} accept=".mp3" {...register('song', { required: true })} type="file" multiple />
         </div>
-      </Modal>
-    
+
+        <div>
+          <div className="pb-1">Select image (Optional)</div>
+          <Input id="image" disabled={isLoading} accept="image/*" {...register('image')} type="file" />
+        </div>
+
+        <Button disabled={isLoading} type="submit">Add Songs</Button>
+      </form>
+    </Modal>
   );
 };
 
