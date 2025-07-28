@@ -40,23 +40,8 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
   const { isOpen, close } = useSidebarToggle();
 
   useEffect(() => {
-    const fetchSongs = async () => {
-      try {
-        const res = await fetch("/api/user-songs");
-
-          if (!res.ok) {
-            const errText = await res.text();
-            throw new Error(`HTTP ${res.status}: ${errText}`);
-          }
-
-        const data = await res.json();
-        setSongs(data);
-      } catch (error) {
-        console.error("Failed to fetch user songs:", error);
-      }
-    };
-
-    fetchSongs();
+    // Replace with your actual data source or logic
+    setSongs([]);
   }, []);
   
   const routes = useMemo(() => [
