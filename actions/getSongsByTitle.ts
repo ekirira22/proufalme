@@ -1,15 +1,15 @@
 import toast from "react-hot-toast";
 
 import { Song } from "@/types";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import getSongs from "./getSongs";
 
 const getSongsByTitle = async (title: String):Promise<Song[]> => {
     // Code to get songs
-    const supabase = createServerComponentClient({
-        cookies: cookies
-    });
+    const supabase = createClientComponentClient();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     
     if(!title) {
         const allSongs = await getSongs();

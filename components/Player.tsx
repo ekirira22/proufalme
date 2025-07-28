@@ -17,7 +17,7 @@ const Player = () => {
     if (player.activeId) {
       player.preloadAudio(player.activeId);
     }
-  }, [player.activeId]);
+  }, [player]);
 
   // Optionally, only play after preload to minimize delay
   // useEffect(() => {

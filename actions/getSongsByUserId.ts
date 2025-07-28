@@ -1,34 +1,23 @@
-import toast from "react-hot-toast";
-
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Song } from "@/types";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
 
-const getSongsByUserId = async ():Promise<Song[]> => {
-    // Code to get songs
-    const supabase = createServerComponentClient({
-        cookies: cookies
-    });
-    
-    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+export default async function getSongsByUserId(): Promise<Song[]> {
+  const supabase = createClientComponentClient();
+  const { data: { session } } = await supabase.auth.getSession();
+  const user = session?.user;
 
-    if (sessionError) {
-        console.log(sessionError.message)
-        return [];
-    }
+  if (!user) return [];
 
-    const { data, error } = await supabase
-        .from('songs')
-        .select('*')
-        .eq('user_id', sessionData.session?.user.id)
-        .order('created_at', { ascending: false });
-    
-    if (error) {
-        console.log(error.message);
-    }
+  const { data, error } = await supabase
+    .from("songs")
+    .select("*")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false });
 
-    return data as any || [];
+  if (error) {
+    console.error(error);
+    return [];
+  }
 
-};
-
-export default getSongsByUserId;
+  return data || [];
+}
