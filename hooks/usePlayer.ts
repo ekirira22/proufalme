@@ -23,10 +23,18 @@ interface PlayerStore {
   next: () => void;
   previous: () => void;
   preloadAudio: (id: string) => void;
+  clearAudioCache: () => void;
   reset: () => void;
 }
 
+// Single audio instance for reuse
 const audio = typeof window !== "undefined" ? new Audio() : null;
+
+// Cache for preloaded audio objects
+// Maximum number of audio objects to cache
+const MAX_CACHE_SIZE = 5;
+
+const audioCache: Record<string, HTMLAudioElement> = {};
 
 const usePlayer = create<PlayerStore>((set, get) => ({
   ids: [],
@@ -41,10 +49,15 @@ const usePlayer = create<PlayerStore>((set, get) => ({
 
     const src = `${location.origin}/songs/${id}.mp3`;
     if (audio.src !== src) {
-      audio.pause();
-      audio.src = src;
-      audio.preload = "auto";
-      audio.load();
+      // Check if we have a preloaded version
+      if (audioCache[id]) {
+        // Use preloaded audio
+        audio.src = audioCache[id].src;
+      } else {
+        audio.src = src;
+        audio.preload = "auto";
+        audio.load();
+      }
     }
 
     set({ activeId: id });
@@ -89,13 +102,19 @@ const usePlayer = create<PlayerStore>((set, get) => ({
   
     const src = `${location.origin}/songs/${activeId}.mp3`;
   
+    // Check if we need to update the source
     const shouldReload = audio.src !== src;
   
     if (shouldReload) {
-      audio.pause();
-      audio.src = src;
-      audio.preload = "auto";
-      audio.load();
+      // Check if we have a preloaded version
+      if (audioCache[activeId]) {
+        audio.src = audioCache[activeId].src;
+      } else {
+        audio.pause();
+        audio.src = src;
+        audio.preload = "auto";
+        audio.load();
+      }
     }
   
     audio.volume = volume;
@@ -118,7 +137,7 @@ const usePlayer = create<PlayerStore>((set, get) => ({
         audio.oncanplaythrough = null; // Clean up the event
       };
     }
-  },  
+  },
 
   pause: () => {
     if (!audio) return;
@@ -162,9 +181,39 @@ const usePlayer = create<PlayerStore>((set, get) => ({
   preloadAudio: (id: string) => {
     if (typeof window === "undefined") return;
 
+    // Check if already preloaded
+    if (audioCache[id]) return;
+
+    // Check cache size and remove oldest if necessary
+    const cacheKeys = Object.keys(audioCache);
+    if (cacheKeys.length >= MAX_CACHE_SIZE) {
+      // Remove the first (oldest) entry
+      const oldestKey = cacheKeys[0];
+      if (audioCache[oldestKey]) {
+        audioCache[oldestKey].pause();
+        audioCache[oldestKey].src = "";
+        delete audioCache[oldestKey];
+      }
+    }
+
     const temp = new Audio(`${location.origin}/songs/${id}.mp3`);
     temp.preload = "auto";
     temp.load();
+    
+    // Cache the preloaded audio object
+    audioCache[id] = temp;
+  },
+
+  // Function to clear audio cache
+  clearAudioCache: () => {
+    // Pause and remove all cached audio objects
+    Object.keys(audioCache).forEach(id => {
+      if (audioCache[id]) {
+        audioCache[id].pause();
+        audioCache[id].src = "";
+        delete audioCache[id];
+      }
+    });
   },
 
   reset: () => {
@@ -172,6 +221,15 @@ const usePlayer = create<PlayerStore>((set, get) => ({
       audio.pause();
       audio.src = "";
     }
+
+    // Clear audio cache
+    Object.keys(audioCache).forEach(id => {
+      if (audioCache[id]) {
+        audioCache[id].pause();
+        audioCache[id].src = "";
+        delete audioCache[id];
+      }
+    });
 
     set({
       ids: [],

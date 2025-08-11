@@ -37,7 +37,6 @@ const SupabaseProvider: React.FC<SupabaseProviderProps> = ({ children }) => {
     setupDeepLinking()
   
     return () => {
-      // clean up on unmount
       if (removeListener && typeof removeListener.remove === "function") {
         removeListener.remove()
       }

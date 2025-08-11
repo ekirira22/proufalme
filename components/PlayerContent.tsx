@@ -124,7 +124,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
     };
 
     return (
-        <div className="grid grid-cols-2 md:grid-cols-3 h-full">
+        <div className="grid grid-cols-3 md:grid-cols-3 h-full">
             {/** Player Image and Like Button */}
             <div className="flex w-full justify-start">
                 <div className="flex items-center gap-x-4">
@@ -139,20 +139,23 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
                 md:hidden
                 col-auto
                 w-full
-                justify-end
+                justify-center
                 items-center
-                gap-x-4
+                gap-x-2
+                sm:gap-x-4
             ">
                 <AiFillStepBackward 
                     onClick={onPlayPrevious} 
-                    size={24} 
-                    className="text-neutral-400 cursor-pointer hover:text-white transition"
+                    size={20} 
+                    className="text-neutral-400 cursor-pointer hover:text-white transition sm:w-6 sm:h-6"
                 />
                 <div
                     onClick={handlePlay}
                     className="
-                        h-10
-                        w-10
+                        h-8
+                        w-8
+                        sm:h-10
+                        sm:w-10
                         flex
                         items-center
                         justify-center
@@ -163,14 +166,14 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
                     "
                 >
                     <Icon
-                        size={30}
-                        className="text-black"
+                        size={24}
+                        className="text-black sm:w-7 sm:h-7"
                     />
                 </div>
                 <AiFillStepForward 
                     onClick={onPlayNext} 
-                    size={24} 
-                    className="text-neutral-400 cursor-pointer hover:text-white transition"
+                    size={20} 
+                    className="text-neutral-400 cursor-pointer hover:text-white transition sm:w-6 sm:h-6"
                 />
             </div>
 

@@ -14,9 +14,12 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({ className, disabled, t
                 bg-neutral-700
                 border
                 border-transparent
-                px-3
-                py-3
+                px-2
+                py-2
+                sm:px-3
+                sm:py-3
                 text-sm
+                sm:text-base
                 file:border-0
                 file:bg-transparent
                 file:text-sm

@@ -14,12 +14,13 @@ const font = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Proufalme™️ Music",
   description: "Music Meets Heaven",
-  // Remove viewport from here!
 };
 
 export const viewport = {
   width: "device-width",
   initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export const revalidate = 0; // For making this layout non-cacheable
@@ -33,6 +34,9 @@ export default async function RootLayout({
 
   return (
       <html lang="en">
+        <head>
+          <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+        </head>
         <body className={font.className}>
           <ToasterProvider />
           <SupabaseProvider>

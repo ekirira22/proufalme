@@ -36,8 +36,11 @@ const Player = () => {
       bg-[#121212]
       w-full
       py-2
-      h-[80px]
-      px-4
+      h-[70px]
+      sm:h-[80px]
+      px-2
+      sm:px-4
+      z-50
     ">
       <PlayerContent  
         key={songUrl}
