@@ -40,7 +40,7 @@ const Header: React.FC<HeaderProps> = ({ children, className }) => {
     </Head>
     <div
       className={twMerge(
-        `mt-2 bg-gradient-to-b from-orange-300 to-orange-700 p-4 md:p-6 rounded-b-2xl shadow-lg`,
+        `mt-2 bg-gradient-to-b from-orange-300 to-orange-700 p-3 sm:p-4 md:p-6 rounded-b-2xl shadow-lg`,
         className
       )}
     >
@@ -51,7 +51,7 @@ const Header: React.FC<HeaderProps> = ({ children, className }) => {
             onClick={toggle}
             className="p-2 bg-white rounded-full hover:opacity-80 transition"
           >
-            <HiMenuAlt3 size={20} className="text-black" />
+            <HiMenuAlt3 size={18} className="text-black" />
           </button>
         </div>
 
@@ -65,17 +65,17 @@ const Header: React.FC<HeaderProps> = ({ children, className }) => {
         >
           <Link
             href="/"
-            className="text-lg md:text-2xl font-bold text-black tracking-wide hover:opacity-80 transition text-center"
+            className="text-base sm:text-lg md:text-2xl font-bold text-black tracking-wide hover:opacity-80 transition text-center"
           >
             Proufalme
-            <span className="text-sm md:text-lg text-blue-700">™</span> Music
+            <span className="text-xs sm:text-sm md:text-lg text-blue-700">™</span> Music
           </Link>
         </div>
 
         {/* Right: Auth Buttons */}
         <div
           className="
-            w-1/3 flex justify-end items-center gap-3
+            w-1/3 flex justify-end items-center gap-2 sm:gap-3
             md:absolute md:right-6 md:top-4 md:w-auto z-10
           "
         >
@@ -83,38 +83,39 @@ const Header: React.FC<HeaderProps> = ({ children, className }) => {
             <>
               <button
                 onClick={authModal.onOpen}
-                className="text-sm md:text-base font-medium text-black hover:underline whitespace-nowrap"
+                className="text-xs sm:text-sm md:text-base font-medium text-black hover:underline whitespace-nowrap hidden sm:block"
               >
                 Sign up
               </button>
               <Button
                 onClick={authModal.onOpen}
-                className="bg-white text-black px-3 py-1 text-sm md:text-base rounded-full font-semibold"
+                className="bg-white text-black px-2 py-1 sm:px-3 sm:py-1 text-xs sm:text-sm md:text-base rounded-full font-semibold"
               >
                 Log in
               </Button>
             </>
           ) : (
-            <>
+            <div className="flex items-center gap-2 sm:gap-3">
               <Button
                 onClick={handleLogout}
-                className="bg-white text-black px-3 py-1 text-sm md:text-base rounded-full font-semibold"
+                className="bg-white text-black px-2 py-1 sm:px-3 sm:py-1 text-xs sm:text-sm md:text-base rounded-full font-semibold"
               >
                 Logout
               </Button>
               <button
                 onClick={() => router.push("/account")}
-                className="p-2 bg-white rounded-full hover:opacity-80 transition"
+                className="flex items-center justify-center p-1.5 sm:p-2 bg-white rounded-full hover:opacity-80 transition"
+                style={{ minWidth: 32, minHeight: 25 }}
               >
                 <FaUserAlt size={18} className="text-black" />
               </button>
-            </>
+            </div>
           )}
 
         </div>
       </div>
       {/* Page content slot */}
-      <div className="mt-6">{children}</div>
+      <div className="mt-4 sm:mt-6">{children}</div>
     </div>
     </>
 

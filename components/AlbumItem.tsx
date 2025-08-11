@@ -46,7 +46,8 @@ const AlbumItem: React.FC<AlbumItemProps> = ({ data }) => {
                 cursor-pointer
                 hover:bg-neutral-400/10
                 transition
-                p-3
+                p-2
+                sm:p-3
             "
         >
             <div className="relative aspect-square w-full h-full rounded-md overflow-hidden">
@@ -58,9 +59,9 @@ const AlbumItem: React.FC<AlbumItemProps> = ({ data }) => {
                 />
             </div>
 
-            <div className="flex flex-col items-start w-full pt-4 gap-y-1">
-                <p className="font-semibold truncate w-full">{data.title}</p>
-                <p className="text-neutral-400 text-sm pb-4 w-full truncate">
+            <div className="flex flex-col items-start w-full pt-2 sm:pt-4 gap-y-1">
+                <p className="font-semibold truncate w-full text-sm sm:text-base">{data.title}</p>
+                <p className="text-neutral-400 text-xs sm:text-sm pb-2 sm:pb-4 w-full truncate">
                     {data.songs?.length || 0} songs
                 </p>
             </div>

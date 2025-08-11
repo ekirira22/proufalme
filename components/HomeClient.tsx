@@ -30,23 +30,23 @@ export default function HomeClient() {
     <div className="bg-neutral-900 rounded-md h-full w-full overflow-hidden overflow-y-auto">
       <Header>
         <div className="mb-2">
-          <h1 className="text-white text-3xl font-semibold">Welcome back</h1>
+          <h1 className="text-white text-xl sm:text-2xl md:text-3xl font-semibold">Welcome back</h1>
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 mt-4">
             <ListItem image="/images/liked.png" name="Liked Songs" href="LikedSongs" />
           </div>
         </div>
       </Header>
 
-      <div className="mt-2 mb-7 px-6">
+      <div className="mt-2 mb-7 px-3 sm:px-6">
         <div className="flex justify-between items-center">
-          <h1 className="text-white text-2xl font-semibold">Newest songs</h1>
+          <h1 className="text-white text-lg sm:text-xl md:text-2xl font-semibold">Newest songs</h1>
         </div>
         <PageContent songs={songs} />
       </div>
 
-      <div className="mt-2 mb-7 px-6">
+      <div className="mt-2 mb-7 px-3 sm:px-6">
         <div className="flex justify-between items-center">
-          <h1 className="text-white text-2xl font-semibold">Latest Albums</h1>
+          <h1 className="text-white text-lg sm:text-xl md:text-2xl font-semibold">Latest Albums</h1>
         </div>
         <AlbumList albums={albums} />
       </div>

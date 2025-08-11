@@ -20,8 +20,11 @@ const useOnPlay = (songs: Song[]) => {
     
         // Preload next few songs (optional)
         const currentIndex = ids.indexOf(id);
-        const nextSongs = ids.slice(currentIndex + 1, currentIndex + 4);
-        nextSongs.forEach((songId) => player.preloadAudio(songId));
+        // Only preload the next song to reduce memory usage
+        const nextSong = ids[currentIndex + 1];
+        if (nextSong) {
+            player.preloadAudio(nextSong);
+        }
     
         player.play();
       };

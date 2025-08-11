@@ -24,16 +24,20 @@ const ListItem: React.FC<ListItemProps> = ({ image, name, href}) => {
             items-center
             rounded-md
             overflow-hidden
-            gap-x-4
+            gap-x-3
+            sm:gap-x-4
             bg-neutral-100/20
             transition
-            pr-4
+            pr-3
+            sm:pr-4
 
         ">
             <div className="
                 relative
-                min-h-[64px]
-                min-w-[64px]
+                min-h-[48px]
+                min-w-[48px]
+                sm:min-h-[64px]
+                sm:min-w-[64px]
             ">
                 <Image 
                     className="object-cover"
@@ -42,7 +46,7 @@ const ListItem: React.FC<ListItemProps> = ({ image, name, href}) => {
                     alt="image"
                 />
             </div>
-            <p className="font-medium truncate py-5 text-white">
+            <p className="font-medium truncate py-3 sm:py-5 text-white text-sm sm:text-base">
                 { name }
             </p>
             <div className="
@@ -54,13 +58,15 @@ const ListItem: React.FC<ListItemProps> = ({ image, name, href}) => {
                 items-center
                 justify-center
                 bg-orange-600
-                p-4
+                p-2
+                sm:p-4
                 drop-shadow-md
-                right-5
+                right-2
+                sm:right-5
                 group-hover:opacity-100
                 hover:scale-110
             ">
-                <FaPlay /> 
+                <FaPlay className="w-3 h-3 sm:w-4 sm:h-4" /> 
             </div>
              
         </button>

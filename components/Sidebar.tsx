@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useMemo, useEffect, useState } from "react";
+import React, { useCallback, useMemo, useEffect, useState } from "react";
 import { BiSearch } from "react-icons/bi";
 import { HiHome } from "react-icons/hi";
 import { LuListMusic } from "react-icons/lu";
@@ -21,6 +21,7 @@ import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { Database } from "@/types_db";
 import { Song } from "@/types";
 import { IoClose } from "react-icons/io5";
+import { SearchInput } from '@/components';
 
 type SongRow = Database["public"]["Tables"]["songs"]["Row"];
 
@@ -39,6 +40,21 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
   const user = useUser();
   const { isOpen, close } = useSidebarToggle();
 
+  // State to control search modal
+  const [showSearchModal, setShowSearchModal] = useState(false);
+
+  // Handler for Search sidebar item
+  const handleSearchClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    setShowSearchModal(true);
+  }, []);
+
+  // Close modal handler
+  const handleCloseSearchModal = useCallback(() => {
+    setShowSearchModal(false);
+    close();
+  }, [close]);
+
   useEffect(() => {
     // Replace with your actual data source or logic
     setSongs([]);
@@ -56,7 +72,8 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
         icon: BiSearch,
         label: 'Search',
         active: pathname === '/search',
-        href: '/search'
+        href: '/search',
+        onClick: handleSearchClick
       }
     ],
     // [
@@ -86,7 +103,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
     //   }
     // ]
     
-  ], [pathname])
+  ], [pathname, handleSearchClick])
 
   const sidebarContent = (
     <div className="flex flex-col gap-y-2 bg-neutral-900 text-white h-full w-[250px] p-4">
@@ -114,7 +131,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
     </div>
   );
 
-  // /px-6 h-[calc(100vh-72px)] overflow-y-scroll hide-scrollbar flex xl:flex-row flex-col-reverse
+  // Only use the stateful showSearchModal for the modal overlay.
     return (
       <div className={twMerge(`
         flex
@@ -138,6 +155,19 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
               {sidebarContent}
             </div>
             <div className="h-full w-full" onClick={close}></div>
+          </div>
+        )}
+
+        {/* Mobile Search Modal Overlay */}
+        {showSearchModal && (
+          <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black bg-opacity-80 md:hidden">
+            <div className="relative w-full max-w-md mx-auto bg-neutral-900 rounded-lg p-4">
+              <button onClick={handleCloseSearchModal} className="absolute top-2 right-2 text-white hover:opacity-75 z-10">
+                <IoClose size={28} />
+              </button>
+              <h2 className="text-lg font-bold text-white mb-4 text-center">Search</h2>
+              <SearchInput />
+            </div>
           </div>
         )}
   

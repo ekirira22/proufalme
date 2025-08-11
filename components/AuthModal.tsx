@@ -29,7 +29,7 @@ const AuthModal = () => {
     }
   }, [session, isOpen, onClose, router])
 
-  // Force logout ONLY when modal is opened (optional, prevents silent login)
+ 
   useEffect(() => {
     if (isOpen && !session) {
       supabaseClient.auth.signOut()

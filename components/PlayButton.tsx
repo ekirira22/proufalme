@@ -8,7 +8,8 @@ const PlayButton = () => {
         rounded-full 
         flex 
         items-center 
-        p-4 
+        p-2
+        sm:p-4 
         drop-shadow-md
         translate
         translate-y-1/4
@@ -17,8 +18,12 @@ const PlayButton = () => {
         group-hover:translate-y-0
         transition 
         hover:scale-110
+        min-h-[32px]
+        min-w-[32px]
+        sm:min-h-[48px]
+        sm:min-w-[48px]
     '>
-        <FaPlay className='text-black' />
+        <FaPlay className='text-black w-3 h-3 sm:w-4 sm:h-4' />
     </button>
   )
 }

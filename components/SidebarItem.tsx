@@ -2,6 +2,7 @@ import Link from "next/link"
 import React from "react"
 import { IconType } from "react-icons"
 import { twMerge } from "tailwind-merge"
+import { useSidebarToggle } from '@/hooks/useSidebarToggle';
 
 interface SidebarItemProps {
     icon: IconType
@@ -16,17 +17,27 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
     active, 
     href,
 }) => {
+    const { close } = useSidebarToggle();
+    const handleClick = () => {
+        // Only close sidebar on mobile
+        if (window.innerWidth < 768) {
+            close();
+        }
+    };
     return (
       <Link
         href={href}
+        onClick={handleClick}
         className={twMerge(`
             flex
             flex-row
             h-auto
             items-center
             w-full
-            gap-x-4
-            text-md
+            gap-x-3
+            sm:gap-x-4
+            text-sm
+            sm:text-md
             font-medium
             cursor-pointer
             hover:text-white
@@ -35,7 +46,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
             py-1
             `, active && "text-white")}
       >
-        <Icon size={26}/>
+        <Icon size={24} className="sm:w-6 sm:h-6"/>
         <p className="truncate w-full">{ label }</p>
       </Link>
     )

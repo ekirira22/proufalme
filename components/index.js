@@ -9,6 +9,7 @@ import Box from './Box';
 import Input from './Input';
 import Library from './Library';
 import Modal from './Modal';
+import SearchModal from './SearchModal';
 import UploadModal from './UploadModal';
 import SongItem from './SongItem';
 import PlayButton from './PlayButton';
@@ -20,6 +21,8 @@ import PlayerContent from './PlayerContent';
 import Slider from './Slider';
 import AlbumItem from './AlbumItem';
 import AlbumList from './AlbumList';
+import SongSkeleton from './SongSkeleton';
+import AlbumSkeleton from './AlbumSkeleton';
 
 export {
   Sidebar,
@@ -33,6 +36,7 @@ export {
   Input,
   Library,
   Modal,
+  SearchModal,
   UploadModal,
   SongItem,
   PlayButton,
@@ -43,5 +47,7 @@ export {
   PlayerContent,
   Slider,
   AlbumItem,
-  AlbumList
+  AlbumList,
+  SongSkeleton,
+  AlbumSkeleton,
 };
