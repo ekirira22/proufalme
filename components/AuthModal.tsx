@@ -36,6 +36,30 @@ const AuthModal = () => {
     }
   }, [isOpen, session, supabaseClient])
 
+  // Handle auth events
+  useEffect(() => {
+    const { data: authListener } = supabaseClient.auth.onAuthStateChange((event, session) => {
+      console.log('Auth state change:', event, session);
+      if (event === 'SIGNED_IN') {
+        console.log('User signed in successfully');
+      } else if (event === 'SIGNED_OUT') {
+        console.log('User signed out');
+      } else if (event === 'USER_UPDATED') {
+        console.log('User updated');
+      } else if (event === 'PASSWORD_RECOVERY') {
+        console.log('Password recovery');
+      } else if (event === 'TOKEN_REFRESHED') {
+        console.log('Token refreshed');
+      } else if (event === 'MFA_CHALLENGE_VERIFIED') {
+        console.log('MFA challenge verified');
+      } 
+    });
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, [supabaseClient]);
+
   const onChange = (open: boolean) => {
     if (!open) onClose()
   }
@@ -64,6 +88,7 @@ const AuthModal = () => {
               },
             },
           }}
+          magicLink={false} // Disable magic links to focus on OAuth
         />
       )}
     </Modal>
